@@ -1,0 +1,11 @@
+{
+    "name": "vespolina/payment-stripe-bundle",
+    "type": "symfony-bundle",
+    "description": "Payment Bundle providing access to the Stripe API",
+    "homepage": "https://github.com/vespolina/VespolinaPaymentStripeBundle",
+    "license": "MIT",
+    "require": {
+        "jms/payment-core-bundle": "master-dev"
+    },
+    "target-dir": "Vespolina/Payment/StripeBundle"
+}
