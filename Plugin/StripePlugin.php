@@ -36,8 +36,8 @@ class StripePlugin extends AbstractPlugin
     {
         $arguments = array(
             'id' => $plan->getId(),
-            'amount' => $plan->getAmount(),
-            'currency' => $plan->getCurrency() * 100,
+            'amount' => $plan->getAmount() * 100,
+            'currency' => $plan->getCurrency(),
             'interval' => self::$intervalMapping[$plan->getInterval()],
             'name' => $plan->getName(),
             'trial_period_days' => $plan->getTrialPeriodDays(),
