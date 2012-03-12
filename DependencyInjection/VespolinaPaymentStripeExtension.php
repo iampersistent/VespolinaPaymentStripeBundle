@@ -32,5 +32,6 @@ class VespolinaPaymentStripeExtension extends Extension
         $loader->load('services.xml');
 
         $container->setParameter('vespolina.payment.stripe.api.key', $config['api_key']);
+        $container->setParameter('vespolina_payment_stripe.file', $config['file']);
     }
 }

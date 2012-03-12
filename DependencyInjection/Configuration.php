@@ -28,6 +28,7 @@ class Configuration implements ConfigurationInterface
         $rootNode
             ->children()
                 ->scalarNode('api_key')->cannotBeOverwritten()->isRequired()->cannotBeEmpty()->end()
+                ->scalarNode('file')->isRequired()->cannotBeEmpty()->end()
             ->end()
         ->end();
 

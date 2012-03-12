@@ -7,10 +7,12 @@
     <parameters>
         <parameter key="payment.plugin.stripe.class">Vespolina\Payment\StripeBundle\Plugin\StripePlugin</parameter>
         <parameter key="vespolina.payment.stripe.api.key"></parameter>
+        <parameter key="vespolina_payment_stripe.file"></parameter>
     </parameters>
 
     <services>
         <service id="payment.plugin.stripe" class="%payment.plugin.stripe.class%">
+            <file>%vespolina_payment_stripe.file%</file>
             <argument>%vespolina.payment.stripe.api.key%</argument>
             <tag name="payment.plugin" />
         </service>
