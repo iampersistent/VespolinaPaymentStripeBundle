@@ -2,10 +2,52 @@
     "name": "vespolina/payment-stripe-bundle",
     "type": "symfony-bundle",
     "description": "Payment Bundle providing access to the Stripe API",
+    "keywords": ["stripe"],
     "homepage": "https://github.com/vespolina/VespolinaPaymentStripeBundle",
     "license": "MIT",
     "require": {
-        "jms/payment-core-bundle": "master-dev"
+        "php": ">=5.3.2",
+        "jms/payment-core-bundle": "master-dev",
+        "stripe/stripe-php": "<=1.5.24"
+
     },
+    "repositories": {
+        "stripe-unofficial": {
+            "type": "package",
+            "package": {
+                "name": "stripe/stripe-php",
+                "version": "1.5.24",
+                "source": {
+                    "url": "git://github.com/stripe/stripe-php.git",
+                    "type": "git",
+                    "reference": "origin/master"
+                },
+                "autoload": {
+                    "classmap": ["lib"]
+                }
+            }
+        },
+        "jms/payment-core-bundle-unofficial": {
+            "type": "package",
+            "package": {
+                "name": "jms/payment-core-bundle",
+                "version": "master-dev",
+                "source": {
+                    "url": "git://github.com/IamPersistent/JMSPaymentCoreBundle.git",
+                    "type": "git",
+                    "reference": "origin/master"
+                }
+            },
+            "autoload": {
+                "psr-0": { "JMS\\Payment\\CoreBundle" : "" }
+            },
+            "target-dir": "jms\\payment-core-bundle"
+        }
+    },
+
+    "autoload": {
+        "psr-0": { "Vespolina\\Payment\\StripeBundle": "" }
+    },
+
     "target-dir": "Vespolina/Payment/StripeBundle"
 }
