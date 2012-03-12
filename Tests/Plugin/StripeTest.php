@@ -12,10 +12,10 @@ class StripeTest extends \PHPUnit_Framework_TestCase
         $this->plugin = $this->getPlugin();
     }
 
-    public function testCreatePlan()
+    public function testPlan()
     {
         $properties = array(
-            'id' => '12345',
+            'id' => 'plugin-test-create-plan',
             'amount' => 2,
             'currency' => 'usd',
             'interval' => PlanInterface::INTERVAL_MONTHLY,
@@ -24,6 +24,14 @@ class StripeTest extends \PHPUnit_Framework_TestCase
         $plan = $this->createPlan($properties);
         $response = $this->plugin->createPlan($plan, false);
         $this->assertInstanceof('\Stripe_Object', $response);
+        // todo: changes response, then test for amount being set to 200
+
+        // todo: test error
+        // todo: updatePlan, by default only the name can be updated. how do we handle other changes
+
+        $response = $this->plugin->deletePlan($plan, false);
+
+        // todo: actually test delete, right now its just a clean up for create
     }
 
     protected function createPlan(array $properties)

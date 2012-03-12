@@ -46,9 +46,20 @@ class StripePlugin extends AbstractPlugin
         return $this->sendPlanRequest('create', $arguments);
     }
 
+    public function deletePlan(PlanInterface $plan, $retry)
+    {
+        $stripePlan = $this->retrievePlan($plan->getId(), $retry);
+        return $stripePlan->delete();
+    }
+
     public function processes($paymentSystemName)
     {
         return 'stripe' === $paymentSystemName;
+    }
+
+    public function retrievePlan($id, $retry)
+    {
+        return $this->sendPlanRequest('retrieve', $id);
     }
 
     public function isIndependentCreditSupported()
