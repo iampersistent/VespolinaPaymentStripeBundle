@@ -16,7 +16,7 @@ class StripeTest extends \PHPUnit_Framework_TestCase
     {
         $properties = array(
             'id' => '12345',
-            'amount' => 200,
+            'amount' => 2,
             'currency' => 'usd',
             'interval' => PlanInterface::INTERVAL_MONTHLY,
             'name' => 'Gold'
