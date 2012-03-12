@@ -29,7 +29,7 @@ class StripePlugin extends AbstractPlugin
 
     public function __construct($apiKey)
     {
-
+        $this->apiKey = $apiKey;
     }
 
     public function createPlan(PlanInterface $plan, $retry)

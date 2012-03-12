@@ -59,10 +59,6 @@ class StripeTest extends \PHPUnit_Framework_TestCase
             'Vespolina\Payment\StripeBundle\Plugin\StripePlugin',
             array('N1Inw9oVpCX6gCOAu8vu4Z9HZOH6vPKK')
         );
-        $api = new \ReflectionProperty($mock, 'apiKey');
-        $api->setAccessible(true);
-        $api->setValue($mock, 'N1Inw9oVpCX6gCOAu8vu4Z9HZOH6vPKK');
-        $api->setAccessible(false);
 
         return $mock;
     }
