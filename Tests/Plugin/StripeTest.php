@@ -34,6 +34,19 @@ class StripeTest extends \PHPUnit_Framework_TestCase
         // todo: actually test delete, right now its just a clean up for create
     }
 
+    public function testRecurring()
+    {
+
+        $this->plugin->initializeRecurring($recurringTransaction, false);
+
+
+    }
+
+    protected function createRecurringTransaction()
+    {
+
+    }
+
     protected function createPlan(array $properties)
     {
         $plan = $this->getMock('JMS\Payment\CoreBundle\Model\Plan',

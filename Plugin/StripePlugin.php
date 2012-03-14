@@ -7,12 +7,14 @@
  */
 namespace Vespolina\Payment\StripeBundle\Plugin;
 
-use JMS\Payment\CoreBundle\Model\PlanInterface;
 use JMS\Payment\CoreBundle\Plugin\AbstractPlugin;
+use JMS\Payment\CoreBundle\Model\CreditCardProfileInterface;
+use JMS\Payment\CoreBundle\Model\PlanInterface;
+use JMS\Payment\CoreBundle\Model\RecurringInstructionInterface;
+use JMS\Payment\CoreBundle\Model\RecurringTransactionInterface;
 
 class StripePlugin extends AbstractPlugin
 {
-
     protected $apiKey;
 
     public static $intervalMapping = array(
@@ -49,7 +51,35 @@ class StripePlugin extends AbstractPlugin
     public function deletePlan(PlanInterface $plan, $retry)
     {
         $stripePlan = $this->retrievePlan($plan->getId(), $retry);
+
         return $stripePlan->delete();
+    }
+
+    function initializeRecurring(RecurringInstructionInterface $instruction, $retry)
+    {
+        $creditCardProfile = $instruction->getCreditCardProfile();
+        $response = $this->createChargeToken($creditCardProfile);
+
+        $arguments = array(
+            'card' => $response['id'],
+            'plan' => $instruction->getProviderPlanId(),
+            'email' => $creditCardProfile->getEmail()
+        );
+
+        $response = $this->sendCustomerRequest('create', $arguments);
+
+        // todo: obviously this is wrong, it should be configurable
+        $transaction = new \JMS\Payment\CoreBundle\Document\RecurringTransaction();
+
+        $transaction->setAmount($creditCardProfile->getAmount());
+        $transaction->setCreditCardProfile($creditCardProfile);
+        $transaction->setCurrency($instruction->getCurrency());
+        $transaction->setPlan($instruction->getProviderPlanId());
+        $transaction->setProcessor('stripe');
+        $transaction->setProcessorId($response->retrieve('id'));
+        $transaction->addResponseData((array)$response);
+
+        return $transaction;
     }
 
     public function processes($paymentSystemName)
@@ -67,6 +97,39 @@ class StripePlugin extends AbstractPlugin
         return false; // todo: this needs to be researched
     }
 
+    protected function createChargeToken(CreditCardProfileInterface $creditCard)
+    {
+        $expiration = $creditCard->getExpiration();
+
+        $arguments = array(
+            "card" => array(
+                "number" => $creditCard->getCardNumber('active'),
+                "exp_month" => $expiration['month'],
+                "exp_year" => $expiration['year'],
+                "cvc" => $creditCard->getCvv(),
+                'name' => $creditCard->getName(),
+                'address_line1' => $creditCard->getStreet1(),
+                'address_line2' => $creditCard->getStreet2(),
+                'address_zip' => $creditCard->getPostcode(),
+                'address_state' => $creditCard->getState(),
+                'address_country' => $creditCard->getCountry(),
+            ),
+            "currency" => "usd",
+        );
+
+        $response = $this->sendTokenRequest('create', $arguments);
+
+        return $response;
+    }
+
+    protected function sendCustomerRequest($method, $arguments)
+    {
+        \Stripe::setApiKey($this->apiKey);
+        $response = \Stripe_Customer::$method($arguments);
+
+        return $response;
+    }
+
     protected function sendPlanRequest($method, $arguments)
     {
         \Stripe::setApiKey($this->apiKey);
@@ -74,4 +137,14 @@ class StripePlugin extends AbstractPlugin
 
         return $response;
     }
+
+    protected function sendTokenRequest($method, $arguments)
+    {
+        \Stripe::setApiKey($this->apiKey);
+        $response = \Stripe_Token::$method($arguments);
+
+        return $response;
+    }
+
+
 }
