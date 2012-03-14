@@ -71,13 +71,16 @@ class StripePlugin extends AbstractPlugin
         // todo: obviously this is wrong, it should be configurable
         $transaction = new \JMS\Payment\CoreBundle\Document\RecurringTransaction();
 
-        $transaction->setAmount($creditCardProfile->getAmount());
+        $transaction->setAmount($instruction->getAmount());
+        $transaction->setBillingFrequency($instruction->getBillingFrequency());
+        $transaction->setBillingInterval($instruction->getBillingInterval());
         $transaction->setCreditCardProfile($creditCardProfile);
         $transaction->setCurrency($instruction->getCurrency());
-        $transaction->setPlan($instruction->getProviderPlanId());
+        $transaction->setPlanId($instruction->getProviderPlanId());
         $transaction->setProcessor('stripe');
-        $transaction->setProcessorId($response->retrieve('id'));
-        $transaction->addResponseData((array)$response);
+        $processable = $response->__toArray(true);
+        $transaction->setProcessorId($processable['id']);
+        $transaction->addResponseData($processable);
 
         return $transaction;
     }
